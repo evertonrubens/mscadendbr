@@ -5,7 +5,6 @@
 
 package main
 
-
 import (
 	"log"
 	"net/http"
@@ -15,7 +14,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-
 )
 
 func init() {
@@ -24,7 +22,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = godotenv.Load(dir + "/dev.env")
+	err = godotenv.Load(dir + "/prd.env")
 	if err != nil {
 		log.Print("Arquivo .env não encontrado.")
 	}
@@ -39,6 +37,6 @@ func main() {
 	routes.SetupRoutes(r)
 
 	// inicia o servidor na porta definida nas variáveis de ambiente
-	log.Println("Iniciando o servidor no IP: ",os.Getenv("IP_SERVER")+os.Getenv("PORT_SERVER"))
+	log.Println("Iniciando o servidor no IP: ", os.Getenv("IP_SERVER")+os.Getenv("PORT_SERVER"))
 	log.Fatal(http.ListenAndServe(os.Getenv("PORT_SERVER"), r))
 }
