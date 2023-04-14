@@ -37,6 +37,6 @@ func main() {
 	routes.SetupRoutes(r)
 
 	// inicia o servidor na porta definida nas variáveis de ambiente
-	log.Println("Iniciando o servidor no IP: ", os.Getenv("IP_SERVER")+os.Getenv("PORT_SERVER"))
+	//log.Println("Iniciando o servidor no IP: ", os.Getenv("IP_SERVER")+os.Getenv("PORT_SERVER"))
 	log.Fatal(http.ListenAndServe(os.Getenv("PORT_SERVER"), r))
 }
