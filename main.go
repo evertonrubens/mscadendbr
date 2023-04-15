@@ -22,7 +22,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = godotenv.Load(dir + "/dev.env")
+	err = godotenv.Load(dir + "/prd.env")
 	if err != nil {
 		log.Print("Arquivo .env não encontrado.")
 	}
