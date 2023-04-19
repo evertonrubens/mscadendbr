@@ -1,23 +1,23 @@
-# Imagem base oficial do Go
+# Use uma imagem oficial do Golang como base
 FROM golang:1.18.2
 
-# Definir diretório de trabalho
+# Defina a pasta de trabalho dentro do container
 WORKDIR /app
 
-# Copiar go.mod e go.sum
+# Copie o arquivo go.mod e go.sum (se existir) para a pasta de trabalho
 COPY go.mod go.sum ./
 
-# Baixar dependências
+# Faça o download das dependências
 RUN go mod download
 
-# Copiar o código-fonte do projeto para o contêiner
+# Copie o restante do código para a pasta de trabalho
 COPY . .
 
-# Compilar o projeto
+# Construa o executável do seu aplicativo
 RUN go build -o main .
 
-# Expor a porta que seu microserviço vai usar (altere conforme necessário)
+# Exponha a porta em que seu aplicativo será executado
 EXPOSE 5001
 
-# Comando para executar o binário compilado
+# Execute o aplicativo
 CMD ["./main"]
