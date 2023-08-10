@@ -3,18 +3,20 @@ package middleware
 import (
 	"fmt"
 	"log"
-	"os"
-	"strings"	
 	"net/http"
-	"github.com/rs/cors"
+	"os"
+	"strings"
+
 	"github.com/dgrijalva/jwt-go"
+	"github.com/rs/cors"
 )
 
+// Middleware, algoritmo responsável por interceptar as requisições entre as
+// rotas as implementações validando o token para aquelas que exigirem esta validação.
 func JWTMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		
-		cors.Default().HandlerFunc(w, r)
 
+		cors.Default().HandlerFunc(w, r)
 
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
@@ -22,10 +24,10 @@ func JWTMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Extract token from header
+		// Extrair o token do Header Autorization
 		tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
 
-		// Validate token
+		// Validação do Token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -42,46 +44,10 @@ func JWTMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Proceed to the next handler
+		// Continuar para o proximo handler
 		next.ServeHTTP(w, r)
 	})
 }
-
-/*
-func JWTMiddleware() http.HandlerFunc {
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		cors.Default().HandlerFunc(w, r)
-
-		tokenString := r.Header.Get("Authorization")
-
-		//tokenString := strings.Replace(r.Header.Get("Authorization"), "Bearer ", "", 1)
-
-		if tokenString == "" {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Token não encontrado"))
-			log.Println("O Bearer Token não foi informado -> ", tokenString)
-			return
-		}
-		log.Println("Analisando o token informado no Authorization:", tokenString)
-
-		token, err := parseJWTToken(tokenString)
-
-		if err != nil {
-			log.Println("Erro dentro do JWTMiddleware, apos a execução do parseJWTToken -> ", err.Error())
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(err.Error()))
-			return
-		}
-
-		if !token.Valid {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Token Inválido"))
-			return
-		}
-	}
-}
-*/
 
 func parseJWTToken(tokenStr string) (*jwt.Token, error) {
 

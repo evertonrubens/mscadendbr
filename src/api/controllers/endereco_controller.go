@@ -3,10 +3,10 @@ package controllers
 import (
 	"encoding/json"
 
-	"net/http"
 	"log"
 	"msCadEndBr/src/api/models"
 	"msCadEndBr/src/db"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -22,24 +22,24 @@ func GetAllEnderecosHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Erro ao buscar os endereços:", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
-    w.Write([]byte(err.Error()))
-    return
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	if len(enderecos) == 0 {
 		w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusNotFound)
-    w.Write([]byte(`{"message": "Não existe endereço cadastrado"}`))
-    return
-}
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(`{"message": "Não existe endereço cadastrado"}`))
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(enderecos); err != nil {
-		 log.Println("Erro ao codificar endereços para JSON:", err)
-     http.Error(w, "Erro ao retornar os endereços", http.StatusInternalServerError)
-   return
+		log.Println("Erro ao codificar endereços para JSON:", err)
+		http.Error(w, "Erro ao retornar os endereços", http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -54,7 +54,7 @@ func GetEnderecosByCepHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-  w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(enderecos)
 }
@@ -63,14 +63,14 @@ func GetEnderecosByCepHandler(w http.ResponseWriter, r *http.Request) {
 func GetEnderecosByNomePFHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	nomePF := vars["nome"]
-  
+
 	enderecos, err := db.GetEnderecosByNomePF(nomePF)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-  w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(enderecos)
 }
@@ -78,15 +78,15 @@ func GetEnderecosByNomePFHandler(w http.ResponseWriter, r *http.Request) {
 // GetEnderecoByIdHandler retorna um endereço por id
 func GetEnderecoByIdHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
+	idPF := vars["id"]
 
-	endereco, err := db.GetEnderecoById(id)
+	endereco, err := db.GetEnderecoById(idPF)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-  w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(endereco)
 }

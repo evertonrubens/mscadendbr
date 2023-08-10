@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"msCadEndBr/src/api/models"
-	"msCadEndBr/src/utils"
+	tools "msCadEndBr/src/utils"
 	"os"
 	"regexp"
 	"strings"
@@ -76,14 +76,14 @@ func GetAllEnderecos() ([]models.Endereco, error) {
 	log.Println("Consulta de todos os enderecos realizada com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return enderecos, nil
 }
 
 // CreateEndereco cria um novo endereço no banco de dados com um ID único gerado a partir de um hash SHA-256
 func CreateEndereco(endereco models.Endereco) (models.Endereco, error) {
-  InitDB()
+	InitDB()
 
 	// Gerar hash SHA-256 a partir dos campos do endereço
 	id := tools.GenerateID()
@@ -114,7 +114,7 @@ func CreateEndereco(endereco models.Endereco) (models.Endereco, error) {
 	log.Println("Insert realizado com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return endereco, nil
 }
@@ -136,7 +136,7 @@ func GetEnderecoById(id string) (models.Endereco, error) {
 	log.Println("Consulta por ID realizada com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return endereco, nil
 }
@@ -167,7 +167,7 @@ func GetEnderecosByCep(cep string) ([]models.Endereco, error) {
 	log.Println("Consulta por CEP realizada com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return enderecos, nil
 }
@@ -175,7 +175,7 @@ func GetEnderecosByCep(cep string) ([]models.Endereco, error) {
 // GetEnderecosByNomePF retorna todos os endereços que possuem o nome da pessoa física informado
 func GetEnderecosByNomePF(nomePF string) ([]models.Endereco, error) {
 
-  InitDB()
+	InitDB()
 	//rows, err := DB.Query("SELECT * FROM endereco WHERE nomePF = ?", nomePF)
 
 	// Prepara a consulta SQL
@@ -207,7 +207,7 @@ func GetEnderecosByNomePF(nomePF string) ([]models.Endereco, error) {
 	log.Println("Consulta por nomePF realizada com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return enderecos, nil
 }
