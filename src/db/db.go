@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"msCadEndBr/src/api/models"
-	"msCadEndBr/src/utils"
+	tools "msCadEndBr/src/utils"
 	"os"
 	"regexp"
 	"strings"
@@ -53,7 +53,7 @@ func GetAllEnderecos() ([]models.Endereco, error) {
 
 	rows, err := DB.Query("SELECT * FROM endereco")
 	if err != nil {
-		return nil, fmt.Errorf("erro ao buscar os endereços: %v", err)
+		return nil, fmt.Errorf("Erro ao buscar os endereços: %v", err)
 	}
 	defer rows.Close()
 
@@ -63,27 +63,27 @@ func GetAllEnderecos() ([]models.Endereco, error) {
 		var endereco models.Endereco
 		err := rows.Scan(&endereco.Id, &endereco.NomePF, &endereco.Logradouro, &endereco.Numero, &endereco.Bairro, &endereco.Cidade, &endereco.Uf, &endereco.Cep, &endereco.DtCriacao)
 		if err != nil {
-			return nil, fmt.Errorf("erro ao obter o endereço: %v", err)
+			return nil, fmt.Errorf("Erro ao obter o endereço: %v", err)
 		}
 
 		enderecos = append(enderecos, endereco)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("erro ao percorrer os registros do endereço: %v", err)
+		return nil, fmt.Errorf("Erro ao percorrer os registros do endereço: %v", err)
 	}
 
 	log.Println("Consulta de todos os enderecos realizada com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return enderecos, nil
 }
 
 // CreateEndereco cria um novo endereço no banco de dados com um ID único gerado a partir de um hash SHA-256
 func CreateEndereco(endereco models.Endereco) (models.Endereco, error) {
-  InitDB()
+	InitDB()
 
 	// Gerar hash SHA-256 a partir dos campos do endereço
 	id := tools.GenerateID()
@@ -95,7 +95,7 @@ func CreateEndereco(endereco models.Endereco) (models.Endereco, error) {
 	r, _ := regexp.Compile("[a-f0-9]{64}")
 	idStr = r.FindString(idStr)
 
-	fmt.Println("conseguimos fazer a extração apenas do hash com 64bytes: ", idStr)
+	fmt.Println("Conseguimos fazer a extração apenas do hash com 64bytes: ", idStr)
 
 	// Inserir endereço no banco de dados
 	sqlStatement := `
@@ -114,7 +114,7 @@ func CreateEndereco(endereco models.Endereco) (models.Endereco, error) {
 	log.Println("Insert realizado com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return endereco, nil
 }
@@ -128,15 +128,17 @@ func GetEnderecoById(id string) (models.Endereco, error) {
 	err := row.Scan(&endereco.Id, &endereco.NomePF, &endereco.Logradouro, &endereco.Numero, &endereco.Bairro, &endereco.Cidade, &endereco.Uf, &endereco.Cep, &endereco.DtCriacao)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return models.Endereco{}, fmt.Errorf("não foi encontrado nenhum endereço com o ID fornecido: %v", err)
+			//return models.Endereco{}, fmt.Errorf("Não foi encontrado nenhum endereço com o ID fornecido: %v", err)
+			//return models.Endereco{}, fmt.Errorf("Não foi encontrado nenhum endereço com o ID fornecido: %v", id)
+			return models.Endereco{}, fmt.Errorf("Não foi encontrado nenhum endereço com o ID fornecido")
 		}
-		return models.Endereco{}, fmt.Errorf("erro ao obter o endereço com o ID fornecido: %v", err)
+		return models.Endereco{}, fmt.Errorf("Erro ao obter o endereço com o ID fornecido: %v", err)
 	}
 
 	log.Println("Consulta por ID realizada com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return endereco, nil
 }
@@ -147,7 +149,7 @@ func GetEnderecosByCep(cep string) ([]models.Endereco, error) {
 
 	rows, err := DB.Query("SELECT * FROM endereco WHERE cep = ?", cep)
 	if err != nil {
-		return nil, fmt.Errorf("erro ao buscar endereços por CEP: %v", err)
+		return nil, fmt.Errorf("Erro ao buscar endereços por CEP: %v", err)
 	}
 	defer rows.Close()
 
@@ -156,18 +158,18 @@ func GetEnderecosByCep(cep string) ([]models.Endereco, error) {
 		var endereco models.Endereco
 		err := rows.Scan(&endereco.Id, &endereco.NomePF, &endereco.Logradouro, &endereco.Numero, &endereco.Bairro, &endereco.Cidade, &endereco.Uf, &endereco.Cep, &endereco.DtCriacao)
 		if err != nil {
-			return nil, fmt.Errorf("erro ao ler dados de endereço: %v", err)
+			return nil, fmt.Errorf("Erro ao ler dados de endereço: %v", err)
 		}
 		enderecos = append(enderecos, endereco)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("erro ao iterar endereços: %v", err)
+		return nil, fmt.Errorf("Erro ao iterar endereços: %v", err)
 	}
 
 	log.Println("Consulta por CEP realizada com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return enderecos, nil
 }
@@ -175,7 +177,7 @@ func GetEnderecosByCep(cep string) ([]models.Endereco, error) {
 // GetEnderecosByNomePF retorna todos os endereços que possuem o nome da pessoa física informado
 func GetEnderecosByNomePF(nomePF string) ([]models.Endereco, error) {
 
-  InitDB()
+	InitDB()
 	//rows, err := DB.Query("SELECT * FROM endereco WHERE nomePF = ?", nomePF)
 
 	// Prepara a consulta SQL
@@ -185,7 +187,7 @@ func GetEnderecosByNomePF(nomePF string) ([]models.Endereco, error) {
 	// Executa a consulta e verifica se houve erro
 	rows, err := DB.Query(sqlStatement, nomePF)
 	if err != nil {
-		return nil, fmt.Errorf("erro ao buscar endereços por nome da pessoa física: %v", err)
+		return nil, fmt.Errorf("Erro ao buscar endereços por nome da pessoa física: %v", err)
 	}
 	defer rows.Close()
 
@@ -195,19 +197,19 @@ func GetEnderecosByNomePF(nomePF string) ([]models.Endereco, error) {
 		var endereco models.Endereco
 		err := rows.Scan(&endereco.Id, &endereco.NomePF, &endereco.Logradouro, &endereco.Numero, &endereco.Bairro, &endereco.Cidade, &endereco.Uf, &endereco.Cep, &endereco.DtCriacao)
 		if err != nil {
-			return nil, fmt.Errorf("erro ao ler dados de endereço: %v", err)
+			return nil, fmt.Errorf("Erro ao ler dados de endereço: %v", err)
 		}
 		enderecos = append(enderecos, endereco)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("erro ao iterar endereços: %v", err)
+		return nil, fmt.Errorf("Erro ao iterar endereços: %v", err)
 	}
 
 	log.Println("Consulta por nomePF realizada com sucesso!")
 
 	defer DB.Close()
-  log.Println("Desconectado no banco de dados com sucesso!")
+	log.Println("Desconectado no banco de dados com sucesso!")
 
 	return enderecos, nil
 }

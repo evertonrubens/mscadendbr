@@ -33,6 +33,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Credencial inválida, por favor informe a credencial (username/password)", http.StatusUnauthorized)
 		return
 	}
+
 	log.Println("Credencial fornecida e validada com sucesso. Token gerado!")
 
 	// Cria o token JWT
