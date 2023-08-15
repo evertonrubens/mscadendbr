@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 
-	"msCadEndBr/src/api/controllers"
-	"msCadEndBr/src/api/middleware"
+	"cadEndBr/src/api/controllers"
+	"cadEndBr/src/api/middleware"
 )
 
 func SetupRoutes(router *mux.Router) {

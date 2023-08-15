@@ -1,4 +1,4 @@
-module msCadEndBr
+module cadEndBr
 
 go 1.18
 

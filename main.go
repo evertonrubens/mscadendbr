@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os"
 
-	"msCadEndBr/src/api/routes"
+	"cadEndBr/src/api/routes"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"msCadEndBr/src/api/models"
-	"msCadEndBr/src/db"
+	"cadEndBr/src/api/models"
+	"cadEndBr/src/db"
 	"net/http"
 
 	"github.com/gorilla/mux"
