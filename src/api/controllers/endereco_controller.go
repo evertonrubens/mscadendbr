@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-
+	"fmt"
 	"log"
 	"msCadEndBr/src/api/models"
 	"msCadEndBr/src/db"
@@ -18,18 +18,26 @@ func GetAllEnderecosHandler(w http.ResponseWriter, r *http.Request) {
 
 	enderecos, err := db.GetAllEnderecos()
 
+	if len(enderecos) == 0 {
+		mensagemResposta := fmt.Sprintf("Não existem endereços cadastrados nesta base de dados")
+		resposta := models.Mensagem{Message: mensagemResposta}
+		responseJSON, err := json.Marshal(resposta)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Erro ao codificar a resposta JSON"))
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		w.Write(responseJSON)
+		return
+	}
+
 	if err != nil {
 		log.Println("Erro ao buscar os endereços:", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
-		return
-	}
-
-	if len(enderecos) == 0 {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"message": "Não existe endereço cadastrado"}`))
 		return
 	}
 
@@ -50,26 +58,26 @@ func GetEnderecosByCepHandler(w http.ResponseWriter, r *http.Request) {
 
 	enderecos, err := db.GetEnderecosByCep(cep)
 
+	if len(enderecos) == 0 {
+		mensagemResposta := fmt.Sprintf("Não existem endereços cadastrados para o CEP Informado: %s", cep)
+		resposta := models.Mensagem{Message: mensagemResposta}
+		responseJSON, err := json.Marshal(resposta)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Erro ao codificar a resposta JSON"))
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		w.Write(responseJSON)
+		return
+	}
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(enderecos)
-}
 
-// GetEnderecosByNomePFHandler retorna os endereços com um determinado nome de pessoa física
-func GetEnderecosByNomePFHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	nomePF := vars["nome"]
-
-	enderecos, err := db.GetEnderecosByNomePF(nomePF)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(enderecos)
@@ -80,15 +88,66 @@ func GetEnderecoByIdHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idPF := vars["id"]
 
+	var emptEndereco models.Endereco
+
 	endereco, err := db.GetEnderecoById(idPF)
+
+	if endereco == emptEndereco {
+
+		mensagemResposta := fmt.Sprintf("Nenhum endereço encontrado para este ID fornecido: %v", idPF)
+		resposta := models.Mensagem{Message: mensagemResposta}
+		responseJSON, err := json.Marshal(resposta)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Erro ao codificar a resposta JSON"))
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		w.Write(responseJSON)
+		return
+	}
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(endereco)
+}
+
+// GetEnderecosByNomePFHandler retorna os endereços com um determinado nome de pessoa física
+func GetEnderecosByNomePFHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	nomePF := vars["nome"]
+
+	enderecos, err := db.GetEnderecosByNomePF(nomePF)
+
+	if len(enderecos) == 0 {
+		mensagemResposta := fmt.Sprintf("Não existem endereços cadastrados para esta pessoa física informada: %s", nomePF)
+		resposta := models.Mensagem{Message: mensagemResposta}
+		responseJSON, err := json.Marshal(resposta)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Erro ao codificar a resposta JSON"))
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		w.Write(responseJSON)
+		return
+	}
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(enderecos)
 }
 
 // CreateEnderecoHandler cria um novo endereço
