@@ -43,10 +43,10 @@ func main() {
 	serverName := os.Getenv("SERVER_NAME")
 	if serverName == "DEV" {
 		log.Println("Iniciando o servidor de DEV no IP: ", os.Getenv("SERVER_IP")+":"+port)
-	  log.Println("Servidor iniciado com sucesso!")
-	  log.Fatal(http.ListenAndServe(":"+port, r))
+		log.Println("Servidor iniciado com sucesso!")
+		log.Fatal(http.ListenAndServe(":"+port, r))
 	}
-	
+
 	/*if serverName == "PRODUCAO" {
 		log.Println("Iniciando o servidor de PRODUÇÃO")
 	  log.Println("Servidor iniciado com sucesso!")
